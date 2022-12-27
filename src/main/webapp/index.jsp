@@ -30,7 +30,7 @@
 					<tr>
 						<td>${board.board_no}</td>
 						<td class="title"><a href="./view?board_no=${board.board_no}">${board.title}</a></td>
-						<%-- 타이틀을 누르면 보드 넘버가 해당 보드 넘버를 가지고 있는 정보 페이지로 이동한다. --%>	
+						<%-- 타이틀을 누르면 보드 넘버가 해당 보드 넘버를 가지고 있는 정보 페이지로 이동한다. --%>
 						<td>${board.user_id}</td>
 						<td>${board.reg_date}</td>
 						<td>${board.views}</td>
@@ -50,6 +50,11 @@
 		</div>
 	</div>
 	<script>
+		// jstl은 디코딩을 하지 않아도 됨 
+		<c:if test="${param.error != null}">
+			alert("${param.error}")
+		</c:if>
+		// getAttribute()로 할 때는 여기서 에러 메시지 호출 ? (get방식으로 할 때는 여기서 에러메시지 ?)
 		<c:if test="${error != null}">
 			alert("${error}")
 		</c:if>

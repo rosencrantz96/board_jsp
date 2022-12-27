@@ -35,7 +35,7 @@ public class BoardDAO {
 		String sql = "select board_no, title, user_id, to_char(reg_date, 'yyyy.mm.dd') reg_date, views from board ";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
 		ResultSet rs = pstmt.executeQuery();
-		
+
 		/*
 		 * String sql =
 		 * "select BOARD_NO, TITLE, USER_ID, to_char(REG_DATE, 'yyyy.mm.dd') REG_DATE , VIEWS from BOARD "
@@ -49,7 +49,7 @@ public class BoardDAO {
 		 * 아래는 얘와 같은 방식임 (하지만 굳이 닫아줄 필요가 없다는 점에서 더 편리함) try { } catch (Exception e) { }
 		 * finally { conn.close(); pstmt.close(); rs. close(); }
 		 */
-		try(conn; pstmt; rs) {
+		try (conn; pstmt; rs) {
 			while (rs.next()) {
 				Board b = new Board();
 				// 데이터 타입 잘 보기!
@@ -73,10 +73,10 @@ public class BoardDAO {
 
 		String sql = "select board_no, title, user_id, to_char(reg_date, 'yyyy.mm.dd') as reg_date, views, content from board where board_no = ? ";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-		pstmt.setInt(1, board_no); 
+		pstmt.setInt(1, board_no);
 		ResultSet rs = pstmt.executeQuery();
-		
-		try(conn; pstmt; rs) {
+
+		try (conn; pstmt; rs) {
 			while (rs.next()) {
 				b.setBoard_no(rs.getInt(1));
 				b.setTitle(rs.getString(2));
@@ -88,30 +88,89 @@ public class BoardDAO {
 			return b;
 		}
 	}
-	
+
 	// 조회수 증가
 	public void updateViews(int board_no) throws Exception {
 		Connection conn = open();
 
 		String sql = "update board set views = (views + 1) where board_no = ?";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-		
-		try(conn;pstmt) {
+
+		try (conn; pstmt) {
 			pstmt.setInt(1, board_no);
 			pstmt.executeUpdate();
-		} 
+		}
 	}
-	
+
 	public void insertBoard(Board b) throws Exception {
 		Connection conn = open();
-		String sql ="insert into board (board_no, user_id, title, content, reg_date, views) values(board_seq.nextval, ?, ?, ?, sysdate, 0)";
+		String sql = "insert into board (board_no, user_id, title, content, reg_date, views) values(board_seq.nextval, ?, ?, ?, sysdate, 0)";
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-		
-		try(conn; pstmt) {
+
+		try (conn; pstmt) {
 			pstmt.setString(1, b.getUser_id());
 			pstmt.setString(2, b.getTitle());
 			pstmt.setString(3, b.getContent());
 			pstmt.executeUpdate();
+		}
+	}
+
+	public Board getViewForEdit(int board_no) throws Exception {
+		Connection conn = open();
+		Board b = new Board();
+
+		String sql = "select board_no, title, user_id, to_char(reg_date, 'yyyy.mm.dd') as reg_date, views, content from board where board_no = ? ";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setInt(1, board_no);
+		ResultSet rs = pstmt.executeQuery();
+
+		try (conn; pstmt; rs) {
+			while (rs.next()) {
+				b.setBoard_no(rs.getInt(1));
+				b.setTitle(rs.getString(2));
+				b.setUser_id(rs.getString(3));
+				b.setReg_date(rs.getString(4));
+				b.setViews(rs.getInt(5));
+				b.setContent(rs.getString(6));
+			}
+			return b;
+		}
+	}
+
+	// 게시판 글 수정
+	public void updateBoard(Board b) throws Exception {
+		Connection conn = open();
+
+		String sql = "update board set title = ?, user_id = ?, content = ? where board_no = ?";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+
+		try (conn; pstmt) {
+			pstmt.setString(1, b.getTitle());
+			pstmt.setString(2, b.getUser_id());
+			pstmt.setString(3, b.getContent());
+			pstmt.setInt(4, b.getBoard_no());
+
+			// 수정된 글이 없을 경우
+			if (pstmt.executeUpdate() != 1) {
+				throw new Exception("DB에러");
+			}
+		}
+	}
+
+	// 게시판 글 삭제
+	public void deleteBoard(int board_no) throws Exception {
+		Connection conn = open();
+
+		String sql = "delete from board where board_no = ? ";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+
+		try (conn; pstmt) {
+			pstmt.setInt(1, board_no); // 물음표 부분에 board_no 세팅
+
+			// 삭제된 글이 없을 경우
+			if (pstmt.executeUpdate() != 1) {
+				throw new Exception("삭제된 글이 없습니다.");
+			}
 		}
 	}
 }

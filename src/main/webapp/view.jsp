@@ -18,7 +18,7 @@
 		<div class="board_view_wrap">
 			<div class="board_view">
 				<div class="title">${board.title}</div>
-				<div class="info">
+				<div class="info" style="position: relative;">
 					<dl>
 						<dt>번호</dt>
 						<dd>${board.board_no}</dd>
@@ -35,18 +35,29 @@
 						<dt>조회</dt>
 						<dd>${board.views}</dd>
 					</dl>
+					<dl style="position: absolute; right: 0;">
+						<dt>
+							<a onclick="chkDelete(${board.board_no}); return false;">삭제하기</a>
+						</dt>
+					</dl>
 				</div>
-				<div class="cont">${board.content}</div>
+				<%--style="white-space:pre-wrap;": 들여쓰기, 줄바꿈 화면에 보이게 해준다 --%>
+				<div class="cont" style="white-space: pre-wrap;">${board.content}</div>
 			</div>
 			<div class="bt_wrap">
-				<a href="list" class="on">목록</a> <a href="edit.html">수정</a>
+				<a href="list" class="on">목록</a> <a
+					href="edit?board_no=${board.board_no}">수정</a>
 			</div>
 		</div>
 	</div>
 	<script>
+		<c:if test="${param.error != null}">
+			alert("${param.error}")
+		</c:if>
 		<c:if test="${error != null}">
 			alert("${error}")
 		</c:if>
 	</script>
+	<script type="text/javascript" src="./script.js"></script>
 </body>
 </html>

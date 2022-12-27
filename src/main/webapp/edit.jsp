@@ -15,46 +15,40 @@
 			<p>자유게시판 입니다.</p>
 		</div>
 		<div class="board_write_wrap">
-			<div class="board_write">
-				<div class="title">
-					<dl>
-						<dt>제목</dt>
-						<dd>
-							<input type="text" placeholder="제목 입력" value="게시판 제목 입니다." />
-						</dd>
-					</dl>
+			<form name="frm" method="post" action="update?board_no=${board.board_no}">
+				<div class="board_write">
+					<div class="title">
+						<dl>
+							<dt>제목</dt>
+							<dd>
+								<%--디비 데이터 크기 잘 고려해서 maxlength를 주어야 합니다. --%>
+								<input type="text" value="${board.title}" name="title" maxlength="50" />
+							</dd>
+						</dl>
+					</div>
+					<div class="info">
+						<dl>
+							<dt>글쓴이</dt>
+							<dd>
+								<input type="text" value="${board.user_id}" name="user_id" maxlength="10" />
+							</dd>
+						</dl>
+					</div>
+					<div class="cont">
+						<textarea name="content">${board.content}</textarea>
+					</div>
 				</div>
-				<div class="info">
-					<dl>
-						<dt>글쓴이</dt>
-						<dd>
-							<input type="text" placeholder="글쓴이 입력" value="김김김" />
-						</dd>
-					</dl>
-					<dl>
-						<dt>비밀번호</dt>
-						<dd>
-							<input type="password" placeholder="비밀번호 입력" value="1234" />
-						</dd>
-					</dl>
+				<div class="bt_wrap">
+					<a onclick="chkForm(); return false;" class="on">수정</a> <a href="list">취소</a>
 				</div>
-				<div class="cont">
-					<textarea placeholder="내용 입력">
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-글 내용이 들어갑니다.
-            </textarea>
-				</div>
-			</div>
-			<div class="bt_wrap">
-				<a href="view.html" class="on">수정</a> <a href="view.html">취소</a>
-			</div>
+			</form>
 		</div>
 	</div>
+	<script>
+	  <c:if test="${error != null}">
+	    alert("${error}");
+	  </c:if>
+	</script>
+	<script type="text/javascript" src="./script.js"></script>
 </body>
 </html>
